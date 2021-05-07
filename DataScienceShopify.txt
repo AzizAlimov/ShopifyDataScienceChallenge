@@ -1,0 +1,50 @@
+1) a) A few outliers are skewing the mean order value, where a large number of shoes are being ordered. We can get a more accurate value for the average order value by using a metric that isn't swayed as much by outliers.
+b) Median, as outliers do not skew the result.
+c) 284
+
+2) a) 
+`SELECT COUNT(*) 
+FROM Orders as o 
+LEFT JOIN Shippers as s
+ON o.ShipperID=s.ShipperID
+WHERE s.ShipperName='Speedy Express';`
+54
+
+We are counting the number of orders from speedy express in the above query.
+
+b)
+`SELECT LastName
+FROM (
+    SELECT LastName, MAX(orderCount) 
+        FROM (
+            SELECT e.LastName, Count(*) as orderCount 
+            FROM Orders as o 
+            LEFT JOIN Employees as e 
+            ON o.EmployeeID=e.EmployeeID 
+            GROUP BY o.EmployeeID
+    )
+);` 
+Peacock
+
+We are return the last name of the employee with the most number of orders
+
+c)
+`SELECT ProductName
+FROM (
+    SELECT ProductName, MAX(NumOrders)
+    FROM (
+        SELECT p.ProductName, SUM(od.Quantity) as NumOrders 
+        FROM Orders as o
+        LEFT JOIN OrderDetails as od
+        ON o.OrderID=od.OrderID
+        LEFT JOIN Products as p
+        ON od.ProductID=p.ProductID
+        LEFT JOIN Customers as c
+        ON c.CustomerID=o.CustomerID
+        WHERE Country="Germany"
+        GROUP BY ProductName
+    )
+);`
+Boston Crab Meat
+
+We find the orders where the customer is located in germany, group by the product then find the number of quantity shipped for each product then return the max of those.
